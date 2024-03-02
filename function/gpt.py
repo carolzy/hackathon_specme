@@ -3,21 +3,24 @@ import logging
 from typing import Optional, List, Dict
 
 import openai
+from openai import OpenAI
+
+client = OpenAI(api_key="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")
 from dotenv import load_dotenv
 
 load_dotenv()
 
-openai.organization = os.environ.get("OPENAI_ORG_ID")
-openai.api_key = "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"
+# TODO: The 'openai.organization' option isn't read in the client API. You will need to pass it when you instantiate the client, e.g. 'OpenAI(organization=os.environ.get("OPENAI_ORG_ID"))'
+# openai.organization = os.environ.get("OPENAI_ORG_ID")
 
 
 class GPTInstance:
     def __init__(
         self,
         system_prompt: str = "You are a helpful assistant.",
-        model="gpt-3.5-turbo",
+        model="gpt-4-turbo-preview",
         keep_state: bool = True,
-        temperature: float = 1,
+        temperature: float = 0,
         logger_name: str = __name__,
         functions: Optional[List] = None,
     ):
@@ -40,9 +43,7 @@ class GPTInstance:
 
         functions = kwargs.pop("functions", self.functions)
 
-        output = openai.ChatCompletion.create(
-            model=self.model, messages=history, functions=functions, *args, **kwargs
-        )
+        output = client.chat.completions.create(model=self.model, messages=history, functions=functions, *args, **kwargs)
         output = output.choices[0].message
 
         self.logger.info(output)

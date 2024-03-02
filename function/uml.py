@@ -61,23 +61,23 @@ def generate_uml_code(
                     3. preferred database (if any) = {framework_db} \n
                     4. preferred integration (if any) = {framework_int} \n
 
-                Can you create an initial diagram (using plantUML) of how I can build it?
+                Can you create an initial diagram (using plantUML) of how I can build it? You MUST respond with the UML diagram and nothing else. If no prefered options are mentioned you must make your own selections and use your selections.?
                 """
             )
 
-            function_call = output.get("function_call", None)
+            function_call = output.function_call
 
             if function_call is None:
                 retries += 1
                 uml_agent.logger.warning("ChatGPT response unsuficient. Retrying...")
                 continue
 
-            if function_call["name"] != "submit_plantuml_code":
+            if function_call.name!= "submit_plantuml_code":
                 retries += 1
                 uml_agent.logger.warning("ChatGPT response unsuficient. Retrying...")
                 continue
             else:
-                arguments = function_call["arguments"]
+                arguments = function_call.arguments
                 arguments = json.loads(arguments)
 
                 uml_code = arguments["plantuml_code"]

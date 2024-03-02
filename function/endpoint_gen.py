@@ -49,7 +49,7 @@ def endpoint_generation(
 
             print(output)
 
-            function_call = output.get("function_call", None)
+            function_call = output.function_call
 
             if function_call is None:
                 retries += 1
@@ -58,14 +58,14 @@ def endpoint_generation(
                 )
                 continue
 
-            if function_call["name"] != "submit_endpoints":
+            if function_call.name!= "submit_endpoints":
                 retries += 1
                 endpoint_agent.logger.warning(
                     "ChatGPT response unsuficient (Wrong function). Retrying..."
                 )
                 continue
             else:
-                arguments = function_call["arguments"]
+                arguments = function_call.arguments
                 arguments = json.loads(arguments)
 
                 return arguments

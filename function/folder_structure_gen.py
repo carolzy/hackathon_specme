@@ -47,19 +47,19 @@ def folder_structure_gen(problem_description: str, uml_code: str, max_retries: i
 
             print(output)
 
-            function_call = output.get("function_call", None)
+            function_call = output.function_call
 
             if function_call is None:
                 retries += 1
                 codegen_agent.logger.warning("ChatGPT response unsuficient. Retrying...")
                 continue
 
-            if function_call["name"] != "submit_file_structure":
+            if function_call.name!= "submit_file_structure":
                 retries += 1
                 codegen_agent.logger.warning("ChatGPT response unsuficient. Retrying...")
                 continue
             else:
-                arguments = function_call["arguments"]
+                arguments = function_call.arguments
                 out_folder = json.loads(arguments)
                 folder_structure = out_folder["file_structure"]
                 return folder_structure

@@ -29,15 +29,15 @@ def codegen(problem_descrption: str, uml_code: str, folder_structure: str) -> st
 
     print(output)
 
-    function_call = output.get("function_call", None)
+    function_call = output.function_call
 
     if function_call is None:
         return None
 
-    if function_call["name"] != "list_of_files":
+    if function_call.name!= "list_of_files":
         return None
     else:
-        arguments = function_call["arguments"]
+        arguments = function_call.arguments
         arguments = json.loads(arguments)
 
         return arguments
