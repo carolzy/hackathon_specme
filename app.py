@@ -15,7 +15,7 @@ import time
 
 ###### page config ###############################################################################################################################
 st.set_page_config(
-    page_title="yobo",
+    page_title="specme",
     page_icon="static/yobo_icon.png",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -34,8 +34,8 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 ###### page header ###############################################################################################################################
 st.markdown(
     """
-    <h1 style='text-align: center;'>YOBO</h1>
-    <h5 style='text-align: center;'>From UML Design to Repo Generation</h5>
+    <h1 style='text-align: center;'>SpecMe</h1>
+    <h5 style='text-align: center;'>From PRD to Repo generation in seconds.</h5>
     """,
     unsafe_allow_html=True
 )
