@@ -22,7 +22,7 @@ from function.gpt import GPTInstance  # Adjust import path as necessary
 gpt_instance = GPTInstance()
 
 VERCEL_TOKEN = 'OWCHQTXMOhuuvM2qBYPyNaSB'
-PROJECT_DIR = '/path/to/your/project'
+PROJECT_DIR = '/Users/spandana/Desktop/generated_repo.zip'
 ZIP_FILE_NAME = 'project.zip'
 
 LANGUAGES = ["Python", "JavaScript", "Java",
@@ -327,7 +327,7 @@ def app():
 
                     deploy_code = st.button('Deploy code')
                     if deploy_code:
-                        zip_project(pseudo_code_json['endpoints'], ZIP_FILE_NAME)
+                        zip_project(PROJECT_DIR, ZIP_FILE_NAME)
                         deployment_response = deploy_to_vercel(ZIP_FILE_NAME, VERCEL_TOKEN, '')
                         
                         if deployment_response.get('error'):

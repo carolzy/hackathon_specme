@@ -1,11 +1,12 @@
-import os
+import streamlit as st
 import logging
 from typing import Optional, List, Dict
 
 import openai
 from openai import OpenAI
 
-client = OpenAI(api_key="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", organization="")
+APIKEY = st.secrets['API_KEY']
+client = OpenAI(api_key=APIKEY, organization="org-k1IoKv4XS4Q9nVvPQsHhXzSp")
 from dotenv import load_dotenv
 
 load_dotenv()
