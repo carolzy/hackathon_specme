@@ -79,6 +79,7 @@ def download_repo(endpoints: dict):
     Returns:
         buffer: a BytesIO object containing all the endpoints.
     """
+    print('trying to download')
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_STORED) as zipf:
         for elem in endpoints:

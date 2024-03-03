@@ -1,7 +1,6 @@
 import streamlit as st
 
 def display_tree(data, path):
-    print(data)
     if path:
         for key in path:
             data = data[key]

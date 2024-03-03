@@ -51,7 +51,7 @@ def endpoint_generation(
                 f"And this is the file structure:\n{folder_structure}"
             )
 
-            print(output)
+            #print(output)
 
             function_call = output.function_call
 

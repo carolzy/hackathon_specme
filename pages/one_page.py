@@ -9,6 +9,8 @@ from function import user_feedback
 from function import class_diagram
 
 import json
+import zipfile
+import requests
 import os
 import time
 import pdfplumber
@@ -18,6 +20,10 @@ from function.gpt import GPTInstance  # Adjust import path as necessary
 
 # Initialize the GPT-4 instance
 gpt_instance = GPTInstance()
+
+VERCEL_TOKEN = 'OWCHQTXMOhuuvM2qBYPyNaSB'
+PROJECT_DIR = '/path/to/your/project'
+ZIP_FILE_NAME = 'project.zip'
 
 LANGUAGES = ["Python", "JavaScript", "Java",
              "Ruby", "C#", "Go", "PHP", "Swift", "TypeScript", "C++", "other", ""]
@@ -56,6 +62,27 @@ def read_pdf(file):
 def read_docx(file):
     doc = Document(file)
     return " ".join(paragraph.text for paragraph in doc.paragraphs)
+
+# Zip your project directory
+def zip_project(directory, zip_name):
+    with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), os.path.join(directory, '..')))
+
+# Deploy zip file to Vercel
+def deploy_to_vercel(zip_file, token, team_id=None):
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/zip',
+    }
+    files = {'file': open(zip_file, 'rb')}
+    params = {}
+    if team_id:
+        params['teamId'] = team_id
+
+    response = requests.post('https://api.vercel.com/v12/now/deployments', headers=headers, files=files, params=params)
+    return response.json()
 
 def app():
     ###### page header ###############################################################################################################################
@@ -266,9 +293,8 @@ def app():
                 if (isinstance(uml_dict_session_state, str)):
                     uml_dict_session_state = json.loads(uml_dict_session_state)
                 display_folder_structure.display_tree(uml_dict_session_state, ["root"])
-
-
                 gen_pseudo_buttom = st.button("Approve folder structure and generate pseudo code")
+                
                 if gen_pseudo_buttom:
                     with st.spinner("Generating pseudo code in repo ..."):
                         pseudo_code_json = endpoint_gen.endpoint_generation(st.session_state['requirements_text'], uml_dict['uml_code'], '', dev_pref_lang, uml_dict_session_state)
@@ -278,9 +304,9 @@ def app():
                         msg_pseu_code.empty()
                 
                 pseudo_code_json = st.session_state.get('pseudo_code_json', None)
-
-
+                print(pseudo_code_json)
                 if pseudo_code_json is not None:
+                    print('psuedo code not none')
                     for i in range(len(pseudo_code_json["endpoints"])):
                         # Only necessary for displaying directory.
                         main_folder = pseudo_code_json["endpoints"][i]['file_path'].split('/')[0]
@@ -289,7 +315,7 @@ def app():
                         file_name = pseudo_code_json["endpoints"][i]['file_path'].split('/')[1]
                         code = pseudo_code_json["endpoints"][i]['contents']
                         uml_dict_session_state['root'][main_folder][file_name] = code
-
+                    print('render download button')
                     st.download_button(
                         data=folder_structure_gen.download_repo(pseudo_code_json['endpoints']),
                         label="Download Repository",
@@ -298,6 +324,18 @@ def app():
                         on_click=folder_structure_gen.download_repo,
                         args=(pseudo_code_json['endpoints'],)
                     )
+
+                    deploy_code = st.button('Deploy code')
+                    if deploy_code:
+                        zip_project(pseudo_code_json['endpoints'], ZIP_FILE_NAME)
+                        deployment_response = deploy_to_vercel(ZIP_FILE_NAME, VERCEL_TOKEN, '')
+                        
+                        if deployment_response.get('error'):
+                            st.write(f"Error deploying to Vercel: {deployment_response.get('error')}")
+                        else:
+                            deployment_url = deployment_response.get('url')
+                            st.write(f"Deployment successful! Your project is live at: https://{deployment_url}")
+
                     
                 else:
                     st.write("... start pseudo code generation ...")
@@ -308,11 +346,11 @@ def app():
                     {"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}
                             """
                 data = json.loads('{"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}')
-                display_folder_structure.display_tree(data, ["root"])
+                #display_folder_structure.display_tree(data, ["root"])
         
         except Exception as e:
                 example_uml = """ 
                     {"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}
                             """
                 data = json.loads('{"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}')
-                display_folder_structure.display_tree(data, ["root"])
+                #display_folder_structure.display_tree(data, ["root"])
