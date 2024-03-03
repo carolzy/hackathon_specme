@@ -6,6 +6,7 @@ from function import uml
 from function import folder_structure_gen
 from function import endpoint_gen
 from function import user_feedback
+from function import class_diagram
 
 import json
 import os
@@ -158,7 +159,8 @@ def app():
             st.error("Please upload a file to proceed.")
 
     ui_block = st.container()
-    uml_block = st.container()
+    uml_block, class_block = st.columns([1, 1])
+    folder_block = st.container()
 
     #### user inputs ########
     with ui_block:
@@ -171,7 +173,7 @@ def app():
         else:
             default_value = ''
         
-        print(default_value)
+        #print(default_value)
         dev_pref_lang = st.selectbox('Preferred programming language?', LANGUAGES, index=LANGUAGES.index(default_value))
 
         if st.session_state['recommended_framework'] is not None:
@@ -179,7 +181,7 @@ def app():
         else:
             default_value = ""
         
-        print(default_value)
+        #print(default_value)
         for i in API_FRAMEWORKS:
             if default_value in i:
                 default_value = i
@@ -191,7 +193,7 @@ def app():
         else:
             default_value = "None needed"
         
-        print(default_value)
+        #print(default_value)
         dev_pref_db = st.selectbox('Preferred database?', DATABASES, index=DATABASES.index(default_value))
 
         if len(st.session_state['recommended_integrations']) > 0:
@@ -199,18 +201,23 @@ def app():
         else:
             default_value = 'None needed'
         
-        print(default_value)
+        #print(default_value)
         dev_pref_integration = st.selectbox('Preferred third-party integrations?', INTEGRATIONS, index=INTEGRATIONS.index(default_value))
         
         uml_dict = st.session_state.get('uml_dict', None)
-        project_req = st.session_state.get('requirements_text', None)
+        class_dict = st.session_state.get('class_dict', None)
         submit_button = st.button("Generate UML Diagram and Repo Structure")
+        # st.image(image='static/padding.png', width=750)
+        # st.image(image='static/padding.png', width=750)
         if submit_button:
-            with st.spinner(" (1/2) Generating UML diagram ..."):
+            with st.spinner(" (1/3) Generating UML diagram ..."):
                 uml_dict = uml.generate_uml_code(text, dev_pref_lang, dev_pref_ts, dev_pref_db, dev_pref_integration)
                 st.session_state['uml_dict'] = uml_dict 
-            with st.spinner(" (2/2) generating UML and Repo structure ..."):
-                uml_dir_json = folder_structure_gen.folder_structure_gen(project_req, dev_pref_lang, uml_dict["uml_code"])
+            with st.spinner(" (2/3) Generating Class diagram ..."):
+                class_dict = class_diagram.generate_class_diagram_code(text, dev_pref_lang, dev_pref_ts, dev_pref_db, dev_pref_integration)
+                st.session_state['class_dict'] = class_dict 
+            with st.spinner(" (3/3) generating Repo structure ..."):
+                uml_dir_json = folder_structure_gen.folder_structure_gen(text, dev_pref_lang, uml_dict["uml_code"])
                 st.session_state['uml_dir_json'] = uml_dir_json
 
 
@@ -230,56 +237,75 @@ def app():
         else:
             st.write("(example output) ... waiting for user description ...")
             st.image(image='static/uml_demo.png', width = 750)
-        
 
-    # file structure 
-    st.subheader('Folder Structure')
+    
+    with class_block:
+        st.subheader('Class Diagram')
 
-    uml_dict_session_state = st.session_state.get('uml_dir_json', None)
-    if uml_dict_session_state is not None:
-        uml_dict_session_state = st.session_state.get('uml_dir_json', None)
-        display_folder_structure.display_tree(uml_dict_session_state, ["root"])
+        class_dict = st.session_state.get('class_dict', None) # retrieve uml_dict from session state
+        if class_dict is not None:
+            st.write(class_dict["comments"])
+            st.image(image=class_dict["url"]
+                    , width = 750)
+            # st.markdown(
+            #     f'<a href="{uml_dict["url"]}" target="_blank"><input type="button" value="load uml"></a>',
+            #     unsafe_allow_html=True
+            # )
 
-
-        gen_pseudo_buttom = st.button("Approve folder structure and generate pseudo code")
-        if gen_pseudo_buttom:
-            with st.spinner("Generating pseudo code in repo ..."):
-                pseudo_code_json = endpoint_gen.endpoint_generation(st.session_state['requirements_text'], uml_dict['uml_code'], '', '', uml_dict_session_state)
-                st.session_state['pseudo_code_json'] = pseudo_code_json 
-                msg_pseu_code = st.success("pseudo code successfully generated and imported ... ")
-                time.sleep(2)
-                msg_pseu_code.empty()
-        
-        pseudo_code_json = st.session_state.get('pseudo_code_json', None)
-
-
-        if pseudo_code_json is not None:
-            for i in range(len(pseudo_code_json["endpoints"])):
-                # Only necessary for displaying directory.
-                main_folder = pseudo_code_json["endpoints"][i]['file_path'].split('/')[0]
-                if not uml_dict_session_state['root'].get(main_folder):
-                    uml_dict_session_state['root'][main_folder] = dict()
-                file_name = pseudo_code_json["endpoints"][i]['file_path'].split('/')[1]
-                code = pseudo_code_json["endpoints"][i]['contents']
-                uml_dict_session_state['root'][main_folder][file_name] = code
-
-            st.download_button(
-                data=folder_structure_gen.download_repo(pseudo_code_json['endpoints']),
-                label="Download Repository",
-                file_name="generated_repo.zip",
-                mime="application/zip",
-                on_click=folder_structure_gen.download_repo,
-                args=(pseudo_code_json['endpoints'],)
-            )
-            
         else:
-            st.write("... start pseudo code generation ...")
+            st.write("(example output) ... waiting for user description ...")
+            st.image(image='static/class_demo.png', width = 750)
+        
+    with folder_block:
+        # file structure 
+        st.subheader('Folder Structure')
 
-    else:
-        st.write("(example output) ... waiting for user description ...")
-        example_uml = """ 
-            {"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}
-                    """
-        data = json.loads('{"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}')
-        display_folder_structure.display_tree(data, ["root"])
+        uml_dict_session_state = st.session_state.get('uml_dir_json', None)
+        if uml_dict_session_state is not None:
+            uml_dict_session_state = st.session_state.get('uml_dir_json', None)
+            print(uml_dict_session_state)
+            display_folder_structure.display_tree(json.loads(uml_dict_session_state), ["root"])
+
+
+            gen_pseudo_buttom = st.button("Approve folder structure and generate pseudo code")
+            if gen_pseudo_buttom:
+                with st.spinner("Generating pseudo code in repo ..."):
+                    pseudo_code_json = endpoint_gen.endpoint_generation(st.session_state['requirements_text'], uml_dict['uml_code'], '', dev_pref_lang, uml_dict_session_state)
+                    st.session_state['pseudo_code_json'] = pseudo_code_json 
+                    msg_pseu_code = st.success("pseudo code successfully generated and imported ... ")
+                    time.sleep(2)
+                    msg_pseu_code.empty()
+            
+            pseudo_code_json = st.session_state.get('pseudo_code_json', None)
+
+
+            if pseudo_code_json is not None:
+                for i in range(len(pseudo_code_json["endpoints"])):
+                    # Only necessary for displaying directory.
+                    main_folder = pseudo_code_json["endpoints"][i]['file_path'].split('/')[0]
+                    if not uml_dict_session_state['root'].get(main_folder):
+                        uml_dict_session_state['root'][main_folder] = dict()
+                    file_name = pseudo_code_json["endpoints"][i]['file_path'].split('/')[1]
+                    code = pseudo_code_json["endpoints"][i]['contents']
+                    uml_dict_session_state['root'][main_folder][file_name] = code
+
+                st.download_button(
+                    data=folder_structure_gen.download_repo(pseudo_code_json['endpoints']),
+                    label="Download Repository",
+                    file_name="generated_repo.zip",
+                    mime="application/zip",
+                    on_click=folder_structure_gen.download_repo,
+                    args=(pseudo_code_json['endpoints'],)
+                )
+                
+            else:
+                st.write("... start pseudo code generation ...")
+
+        else:
+            st.write("(example output) ... waiting for user description ...")
+            example_uml = """ 
+                {"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}
+                        """
+            data = json.loads('{"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}')
+            #display_folder_structure.display_tree(data, ["root"])
 

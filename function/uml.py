@@ -61,7 +61,7 @@ def generate_uml_code(
                     3. selected database = {framework_db} \n
                     4. selected integration = {framework_int} \n
 
-                Can you create an initial diagram (using plantUML) of how I can build it? You MUST respond with the UML diagram and nothing else. 
+                Can you create an initial diagram (using latest version of plantUML) of how I can build it? You MUST respond with the UML diagram and nothing else. 
                 """
             )
 
