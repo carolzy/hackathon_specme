@@ -20,9 +20,7 @@ def app():
             }
         </script>
     """, unsafe_allow_html=True)
-    st.title('Welcome to YOBO')
-    st.subheader('Your One-Stop Solution for UML Design and Repo Generation')
-    st.write('YOBO is an innovative platform that assists developers from the initial UML design to the final repository generation.')
+    st.subheader('Go from requirements document to functioning endpoint instantly!')
 
     # Create a file uploader widget
     uploaded_file = st.file_uploader("Choose a file", type=['pdf', 'docx', 'txt'])
