@@ -1,10 +1,10 @@
 # app.py
 import streamlit as st
-from pages import landing_page, choose_tech_stack, generate_backend, generate_design, choose_tech_stack
+from pages import landing_page, choose_tech_stack, generate_backend, generate_design, generation_page
 
-import sys
-print("Python executable:", sys.executable)
-print("Python version:", sys.version)
+# import sys
+# print("Python executable:", sys.executable)
+# print("Python version:", sys.version)
 
 # Define a function to render the current page
 ###### page config ###############################################################################################################################

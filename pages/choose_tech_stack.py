@@ -114,5 +114,5 @@ def app():
         if all_selections_made:
             submit_button = st.button("Step 3: Generate UML")
             if submit_button:
-                # Perform next actions here such as generating UML and navigating to the next page
-                pass
+               st.session_state['current_page'] = 'Generate Design'
+               st.rerun()
