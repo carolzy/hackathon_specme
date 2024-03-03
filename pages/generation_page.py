@@ -13,16 +13,18 @@ import time
   
 # create a language model that summarizes a meeting from transcripts and get the keypoints out of it
 def app():
-    hide_st_style = """
-                <style>
-                MainMenu {visibility: hidden;}
-                footer {visibility: hidden;}
-                header {visibility: hidden;}
-                body {margin-top: -20px;} /* Adjust this value as needed */
-                </style>
-                """
-    st.markdown(hide_st_style, unsafe_allow_html=True)
 
+    # SpecMe title
+    st.markdown("""
+        <h1 style="color: #FF4B4B;">SpecMe</h1>
+    """, unsafe_allow_html=True)
+    
+    # Button to manually reset state and return to the landing page
+    if st.button('Go back to requirements upload'):
+        for key in st.session_state.keys():
+            del st.session_state[key]
+        st.session_state['current_page'] = 'Landing Page'
+        st.experimental_rerun()
 
     ###### page header ###############################################################################################################################
     st.markdown(
