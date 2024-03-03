@@ -29,6 +29,23 @@ Can you create an initial diagram (using plantUML) of how I can build it?""",
     },
 ]
 
+class_diagram_examples = [
+    {
+        "role": "user",
+        "content": """Hey chatGPT, I want to brainstorm for a new project, the idea is to create a chatbot to prepare the perfect coffee, it would be hooked to an espresso machine.
+
+Can you create an initial diagram (using plantUML) of how I can build it?""",
+    },
+    {
+        "role": "assistant",
+        "content": None,
+        "function_call": {
+            "name": "submit_plantuml_code",
+            "arguments": '{"plantuml_code": "@startuml\\n\\nclass Chatbot {\\n    +getUserPreferences()\\n    +processOrder()\\n    +sendCommandToMachine()\n}\n\nclass UserPreferences {\\n    -coffeeType: String\\n    -sugarLevel: int\\n    -milkAmount: int\\n    -size: String\\n    +setPreferences()\\n    +getPreferences()\\n}\\n\\nclass EspressoMachineInterface {\\n    +brewCoffee()\\n    +setCoffeeType()\\n    +setSugarLevel()\\n    +setMilkAmount()\\n    +setSize()\\n}\\n\\nclass CoffeeOrder {\\n    -orderID: int\\n    -preferences: UserPreferences\\n    +createOrder()\\n    +getOrderDetails()\\n}\\n\\nChatbot "1" --> "1" UserPreferences : collects >\\nChatbot "1" -->"1" EspressoMachineInterface : commands >\\nUserPreferences "1" --> "1" CoffeeOrder : defines >\\nEspressoMachineInterface "1" o-- "1" CoffeeOrder : uses >\\n\\n@enduml"}',
+        },
+    },
+]
+
 folder_examples = [
     {
         "role": "user",
