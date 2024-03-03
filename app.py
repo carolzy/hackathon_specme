@@ -1,10 +1,6 @@
 # app.py
 import streamlit as st
-from pages import landing_page, choose_tech_stack, generate_backend, generate_design, generation_page
-
-# import sys
-# print("Python executable:", sys.executable)
-# print("Python version:", sys.version)
+from pages import generate_api_options, landing_page, generate_backend, generate_design
 
 # Define a function to render the current page
 ###### page config ###############################################################################################################################
@@ -18,8 +14,7 @@ st.set_page_config(
 def render_page(page):
     pages = {
         "Landing Page": landing_page.app,
-        "Generation Page": generation_page.app,
-        "Choose Tech Stack Page": choose_tech_stack.app,
+        "Choose Tech Stack Page": generate_api_options.app,
         "Generate Design": generate_design.app,
         "Generate Backend": generate_backend.app,
     }

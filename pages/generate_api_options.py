@@ -37,14 +37,10 @@ INTEGRATIONS = ["None needed", "OpenAI LLM Generations Endpoints","Serper API fo
 
 def button_clicked():
     st.session_state['current_page'] = 'Generate Design'
-    # st.experimental_rerun()
 
 def app():
      # Clearing the spinner session state if it was set on a previous page
-    if 'validating' in st.session_state:
-        del st.session_state['validating']
     st.subheader("Choose Tech Stack")
-    ui_block, uml_block = st.columns([0.8, 0.2])
 
     # Initialize session state for selections if not already set
     if 'recommended_language' not in st.session_state:
@@ -136,4 +132,3 @@ def app():
             
      # Button to proceed to the next step, should be enabled only after all selections are made
     st.button("Step 3: Generate UML", on_click=button_clicked)
-               
