@@ -52,4 +52,4 @@ def app():
                                                                      st.session_state.get('recommended_language'), uml_dict["uml_code"])
             st.session_state['current_page'] = 'Generate Backend'
             st.session_state['uml_dir_json'] = uml_dir_json
-            st.switch_page('page/generate_backend.py')
+            st.switch_page('pages/generate_backend.py')
