@@ -11,11 +11,11 @@ EM_PASS = os.getenv("EM_PASS")
 
 
 def submit_user_feedback(feedback_str):
-    email_sender = 'yobo.internal@gmail.com'
+    email_sender = 'sgovindgari@gmail.com'
     email_password = EM_PASS
-    email_reciever = 'yobo.internal@gmail.com'
+    email_reciever = 'sgovindgari@gmail.com'
 
-    subject = 'YOBO new user feedback'
+    subject = 'SpecMe new user feedback'
     body = feedback_str
 
     em = EmailMessage()
