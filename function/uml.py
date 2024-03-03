@@ -38,7 +38,7 @@ def generate_uml_code(
                         },
                         "context_and_reasoning": {
                             "type": "string",
-                            "description": "The context and reasoning necessary for the user to understand the UML",
+                            "description": "The context and reasoning necessary for the user to understand the UML in under 100 words",
                         },
                     },
                     "required": ["plantuml_code", "context_and_reasoning"],
@@ -61,7 +61,7 @@ def generate_uml_code(
                     3. preferred database (if any) = {framework_db} \n
                     4. preferred integration (if any) = {framework_int} \n
 
-                Can you create an initial diagram (using plantUML) of how I can build it? You MUST respond with the UML diagram and nothing else. If no prefered options are mentioned you must make your own selections and use your selections.?
+                Can you create an initial diagram (using plantUML) of how I can build it? You MUST respond with the UML diagram and nothing else. 
                 """
             )
 

@@ -8,7 +8,7 @@ import io
 
 
 
-def folder_structure_gen(problem_description: str, uml_code: str, max_retries: int = 3) -> str:
+def folder_structure_gen(problem_description: str, lang: str, uml_code: str, max_retries: int = 3) -> str:
     FALLBACK_ERROR_MESSAGE = {
         "url": None,
         "comments": "I'm afraid I cannot generate a file directory at the moment. Please try again",
@@ -43,6 +43,7 @@ def folder_structure_gen(problem_description: str, uml_code: str, max_retries: i
             output = codegen_agent(
                 f"Help me come up with the organization for the code repository of my project.\nThe problem is {problem_description}.\n"
                 f"The architecture diagram is as follows: {uml_code}"
+                f"The backend programming language is as follows: {lang}\n"
             )
 
             print(output)
