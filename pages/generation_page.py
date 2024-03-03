@@ -13,13 +13,6 @@ import time
   
 # create a language model that summarizes a meeting from transcripts and get the keypoints out of it
 def app():
-    ###### page config ###############################################################################################################################
-    st.set_page_config(
-        page_title="yobo",
-        page_icon="static/yobo_icon.png",
-        layout="wide",
-        initial_sidebar_state="expanded",
-    )
     hide_st_style = """
                 <style>
                 MainMenu {visibility: hidden;}
