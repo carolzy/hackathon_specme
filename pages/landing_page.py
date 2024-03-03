@@ -58,7 +58,8 @@ def app():
 
             # If document is validated, proceed to the next page
             if validated:
-                st.session_state['current_page'] = 'Generation Page'
+                st.session_state['current_page'] = 'Choose Tech Stack Page'
+                st.session_state['requirements_text'] = text
                 st.experimental_rerun()
         else:
             st.error("Please upload a file to proceed.")

@@ -1,6 +1,6 @@
 # app.py
 import streamlit as st
-from pages import landing_page, generation_page
+from pages import landing_page, generation_page, choose_tech_stack
 
 import sys
 print("Python executable:", sys.executable)
@@ -19,6 +19,7 @@ def render_page(page):
     pages = {
         "Landing Page": landing_page.app,
         "Generation Page": generation_page.app,
+        "Choose Tech Stack Page": choose_tech_stack.app,
     }
     page_function = pages[page]
     page_function()
