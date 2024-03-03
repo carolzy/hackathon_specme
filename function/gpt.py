@@ -30,7 +30,7 @@ class GPTInstance:
         self.functions = functions
 
     def __call__(
-        self, input: Optional[str] = None, role: str = "user", *args, **kwargs
+        self, input: Optional[str] = None, role: str = "user", max_tokens=None, *args, **kwargs
     ) -> Dict:
 
         history = [*self.messages]
@@ -40,7 +40,11 @@ class GPTInstance:
 
         functions = kwargs.pop("functions", self.functions)
 
-        output = client.chat.completions.create(model=self.model, messages=history, functions=functions, *args, **kwargs)
+        if max_tokens:
+            output = client.chat.completions.create(model=self.model, messages=history, functions=functions, max_tokens=max_tokens, *args, **kwargs)
+        else:
+            output = client.chat.completions.create(model=self.model, messages=history, functions=functions, *args, **kwargs)
+
         output = output.choices[0].message
 
         self.logger.info(output)

@@ -2,6 +2,10 @@
 import streamlit as st
 from pages import landing_page, generation_page
 
+import sys
+print("Python executable:", sys.executable)
+print("Python version:", sys.version)
+
 # Define a function to render the current page
 ###### page config ###############################################################################################################################
 st.set_page_config(

@@ -11,7 +11,6 @@ import json
 import os
 import time
 
-
 # Constants
 LANGUAGES = ["No specific preference", "Python", "JavaScript", "Java",
              "Ruby", "C#", "Go", "PHP", "Swift", "TypeScript", "C++", "other"]
