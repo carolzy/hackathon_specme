@@ -9,10 +9,36 @@ print("Python version:", sys.version)
 # Define a function to render the current page
 ###### page config ###############################################################################################################################
 st.set_page_config(
+<<<<<<< HEAD
         page_title="yobo",
         page_icon="static/yobo_icon.png",
         layout="wide",
         initial_sidebar_state="collapsed"
+=======
+    page_title="specme",
+    page_icon="static/yobo_icon.png",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+hide_st_style = """
+            <style>
+            MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            body {margin-top: -20px;} /* Adjust this value as needed */
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+
+###### page header ###############################################################################################################################
+st.markdown(
+    """
+    <h1 style='text-align: center;'>SpecMe</h1>
+    <h5 style='text-align: center;'>From PRD to Repo generation in seconds.</h5>
+    """,
+    unsafe_allow_html=True
+>>>>>>> ae7d2a7 (naming app title as specme)
 )
 
 def render_page(page):
