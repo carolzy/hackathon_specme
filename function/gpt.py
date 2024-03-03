@@ -5,7 +5,7 @@ from typing import Optional, List, Dict
 import openai
 from openai import OpenAI
 
-client = OpenAI(api_key="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", organization="org-k1IoKv4XS4Q9nVvPQsHhXzSp")
+client = OpenAI(api_key="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", organization="")
 from dotenv import load_dotenv
 
 load_dotenv()
