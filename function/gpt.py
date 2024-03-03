@@ -5,13 +5,10 @@ from typing import Optional, List, Dict
 import openai
 from openai import OpenAI
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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", organization="org-k1IoKv4XS4Q9nVvPQsHhXzSp")
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# TODO: The 'openai.organization' option isn't read in the client API. You will need to pass it when you instantiate the client, e.g. 'OpenAI(organization=os.environ.get("OPENAI_ORG_ID"))'
-# openai.organization = os.environ.get("OPENAI_ORG_ID")
 
 
 class GPTInstance:
