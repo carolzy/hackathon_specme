@@ -25,14 +25,7 @@ hide_st_style = """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
-###### page header ###############################################################################################################################
-st.markdown(
-    """
-    <h1 style='text-align: center;'>SpecMe</h1>
-    <h5 style='text-align: center;'>From PRD to Repo generation in seconds.</h5>
-    """,
-    unsafe_allow_html=True
-)
+###### page header ##############################################################################################################################
 
 def render_page(page):
     pages = {

@@ -1,11 +1,11 @@
-# pages/landing_page.py
+# pages/2_Choose_Tech_Stack.py
 import streamlit as st
 from function import uml
 from function import folder_structure_gen
 
 st.set_page_config(page_title="Choose Tech Stack")
 ###### Body ###############################################################################################################################
-ui_block, uml_block = st.columns([0.7, 0.3])
+ui_block, uml_block = st.columns([0.8, 0.2])
 
 #### user inputs ########
 with ui_block:
@@ -81,7 +81,7 @@ with ui_block:
         if dev_pref_integration == "more":
             dev_pref_integration = st.text_input("")
     
-    submit_button = st.button("Submit")
+    submit_button = st.button("Step 3: Generate UML")
     if submit_button:
         with st.spinner(" (2/2) generating UML and Repo structure ..."):
             # TODO: pass the uml design, project requirements 
