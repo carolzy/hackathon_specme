@@ -10,15 +10,18 @@ import json
 def app():
 
     st.subheader('Backend Code and Folder Structure')
+    with st.spinner("Generating Repo structure ..."):
+        uml_dir_json = folder_structure_gen.folder_structure_gen(st.session_state.get('project_req'), st.session_state.get('recommended_language'), st.session_state.get('uml_code'))
+        st.success()
 
-    uml_dict_session_state = st.session_state.get('uml_dir_json', None)
+    uml_dict_session_state = uml_dir_json
     dev_project_req = st.session_state.get('requirements_text', None)
     uml_dict = st.session_state.get('uml_dict', None)
     class_diagram_dict = st.session_state.get('class_diagram_dict', None)
     language = st.session_state.get('recommended_language', None)
 
     if uml_dict_session_state is not None:
-        uml_dict_session_state = st.session_state.get('uml_dir_json', None)
+        uml_dict_session_state = uml_dir_json
         display_folder_structure.display_tree(uml_dict_session_state, ["root"])
 
         gen_pseudo_buttom = st.button(
