@@ -38,7 +38,7 @@ def generate_uml_code(
                         },
                         "context_and_reasoning": {
                             "type": "string",
-                            "description": "The context and reasoning necessary for the user to understand the UML in under 100 words",
+                            "description": "The context and reasoning necessary for the user to understand the UML",
                         },
                     },
                     "required": ["plantuml_code", "context_and_reasoning"],
@@ -81,7 +81,12 @@ def generate_uml_code(
                 arguments = json.loads(arguments)
 
                 uml_code = arguments["plantuml_code"]
-                url = process_uml_code(uml_code)
+                if '@enduml' in uml_code:
+                    url = process_uml_code(uml_code)
+                else:
+                    retries += 1
+                    uml_agent.logger.warning("ChatGPT response unsuficient. Retrying...")
+                    continue
 
                 return {
                     "url": url,

@@ -81,7 +81,6 @@ def generate_class_diagram_code(
                 arguments = json.loads(arguments)
 
                 uml_code = arguments["plantuml_code"]
-                print(uml_code)
                 url = process_class_diagram_code(uml_code)
 
                 return {
