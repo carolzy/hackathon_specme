@@ -3,6 +3,14 @@ import streamlit as st
 from pages import landing_page, generation_page
 
 # Define a function to render the current page
+###### page config ###############################################################################################################################
+st.set_page_config(
+        page_title="yobo",
+        page_icon="static/yobo_icon.png",
+        layout="wide",
+        initial_sidebar_state="collapsed"
+)
+
 def render_page(page):
     pages = {
         "Landing Page": landing_page.app,
