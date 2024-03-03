@@ -35,6 +35,10 @@ INTEGRATIONS = ["None needed", "OpenAI LLM Generations Endpoints","Serper API fo
                 "Microsoft Azure", "Google Cloud Platform", "Salesforce API", "Twilio API", "Slack API", "Shopify API", "LinkedIn API",
                                                             "Mailchimp API", "Twitch API", "GitHub API", "other"]
 
+def button_clicked():
+    st.session_state['current_page'] = 'Generate Design'
+    # st.experimental_rerun()
+
 def app():
      # Clearing the spinner session state if it was set on a previous page
     if 'validating' in st.session_state:
@@ -53,7 +57,7 @@ def app():
         st.session_state['recommended_integrations'] = []
 
     if not st.session_state['recommended_language'] and not st.session_state['recommended_framework'] and not len(st.session_state['recommended_databases'] ) and not len(st.session_state['recommended_integrations'] ):
-        with ui_block:
+        # with ui_block:
             text = st.session_state.get('requirements_text', '')
             # Programming language selection
             col1_lang, col2_lang = st.columns([3, 5])
@@ -143,14 +147,12 @@ def app():
                         st.session_state['recommended_integrations'].append(selected_integ)
             
         # Button to proceed to the next step, should be enabled only after all selections are made
-        all_selections_made = all([
-            st.session_state['recommended_language'] is not None,
-            st.session_state['recommended_framework'] is not None,
-            st.session_state['recommended_databases'] is not None,
-            st.session_state['recommended_integrations'] is not None
-        ])
-        if all_selections_made:
-            submit_button = st.button("Step 3: Generate UML")
-            if submit_button:
-               st.session_state['current_page'] = 'Generate Design'
-               st.experimental_rerun()
+        # all_selections_made = all([
+        #     st.session_state['recommended_language'] is not None,
+        #     st.session_state['recommended_framework'] is not None,
+        #     st.session_state['recommended_databases'] is not None,
+        #     st.session_state['recommended_integrations'] is not None
+        # ])
+        #if all_selections_made:
+    st.button("Step 3: Generate UML", on_click=button_clicked)
+               
