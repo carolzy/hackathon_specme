@@ -9,23 +9,11 @@ print("Python version:", sys.version)
 # Define a function to render the current page
 ###### page config ###############################################################################################################################
 st.set_page_config(
-    page_title="specme",
-    page_icon="static/yobo_icon.png",
-    layout="wide",
-    initial_sidebar_state="expanded",
+        page_title="yobo",
+        page_icon="static/yobo_icon.png",
+        layout="wide",
+        initial_sidebar_state="collapsed"
 )
-hide_st_style = """
-            <style>
-            MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            body {margin-top: -20px;} /* Adjust this value as needed */
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
-
-
-###### page header ##############################################################################################################################
 
 def render_page(page):
     pages = {
