@@ -29,13 +29,17 @@ def app():
     st.subheader('Go from requirements document to functioning endpoint instantly!')
 
     uploaded_file = st.file_uploader("Choose a file", type=['pdf', 'docx', 'txt'], key="file_uploader")
+
+    text_input = st.text_area("Or type your requirements here", key="text_input")
     
     if st.button('Validate and Proceed', key="proceed_button"):
-        if uploaded_file is not None:
+        if uploaded_file is not None or text_input:
             with st.spinner('Validating document...'):
                 # Determine the file type and extract text
                 text = None
-                if uploaded_file.type == "application/pdf":
+                if text_input:
+                    text = text_input
+                elif uploaded_file.type == "application/pdf":
                     text = read_pdf(uploaded_file)
                 elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
                     text = read_docx(uploaded_file)
