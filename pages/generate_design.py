@@ -1,6 +1,7 @@
 # pages/generate_design.py
 import streamlit as st
 from function import uml, class_diagram
+from function import folder_structure_gen
 
 def app():
     col1, col2 = st.columns(2)
@@ -47,5 +48,8 @@ def app():
     submit_button = st.button("Step 4: Generate Backend Code")
     if submit_button and class_diagram_dict:
         with st.spinner(" (4/4) generating Repo structure ..."):
+            uml_dir_json = folder_structure_gen.folder_structure_gen(project_req, 
+                                                                     st.session_state.get('recommended_language'), uml_dict["uml_code"])
             st.session_state['current_page'] = 'Generate Backend'
-            st.experimental_rerun()
+            st.session_state['uml_dir_json'] = uml_dir_json
+            st.switch_page('page/generate_backend.py')
