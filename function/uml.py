@@ -55,7 +55,7 @@ def generate_uml_code(
         try:
             output = uml_agent(
                 f"""I want to brainstorm for a new project, the idea is:\n{project_requirements}.
-                These are some developer's technology preference to include, but keep in mind this is only a preference, do not include it or use it if it doesn't make sense. Do not include anything related to the front-end, authentication, or mobile. This design should be focused on the backend parts of the system. Also keep it as simple as possible. Here are the preferences:\n
+                These are some developer's technology preference to include, but keep in mind this is only a preference, do not include it or use it if it doesn't make sense. Do not include anything related to the front-end, authentication, or mobile. This design should be focused on the backend parts of the system. Keep it as simple as possible. Remove any unnecessary components. Also keep it as simple as possible. Here are the preferences:\n
                     1. selected programming language = {framework_lang} \n
                     2. selected API framework = {framework_ts} \n
                     3. selected database = {framework_db} \n
