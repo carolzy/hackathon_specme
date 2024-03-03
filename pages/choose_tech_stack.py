@@ -147,12 +147,5 @@ def app():
                         st.session_state['recommended_integrations'].append(selected_integ)
             
         # Button to proceed to the next step, should be enabled only after all selections are made
-        # all_selections_made = all([
-        #     st.session_state['recommended_language'] is not None,
-        #     st.session_state['recommended_framework'] is not None,
-        #     st.session_state['recommended_databases'] is not None,
-        #     st.session_state['recommended_integrations'] is not None
-        # ])
-        #if all_selections_made:
     st.button("Step 3: Generate UML", on_click=button_clicked)
                
