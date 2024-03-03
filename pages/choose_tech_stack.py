@@ -30,13 +30,15 @@ DATABASES = ["None needed", "MySQL", "Pinecone Vector DB", "MongoDB", "PostgreSQ
              "Amazon Aurora", "MariaDB", "Amazon DynamoDB", "Couchbase", "Firebase Realtime Database", "Google BigQuery",
                                                             "InfluxDB", "Neo4j", "ArangoDB", "Apache HBase", "IBM Db2", "CouchDB", "No specific preference", "other"]
 
-INTEGRATIONS = ["None needed", "OpenAI LLM Generations", "OpenAI Dalle-2", "Auth0 for authentication", "Serper API for programmatically searching the web ",  "Stripe (Payment Gateway)", "PayPal (Payment Gateway)", "Braintree (Payment Gateway)",  "Google Maps API",
+INTEGRATIONS = ["None needed", "OpenAI Endpoints","Serper API for programmatically searching the web ",  "Stripe (Payment Gateway)", "PayPal (Payment Gateway)", "Braintree (Payment Gateway)",  "Google Maps API",
                 "Twitter API", "Facebook Graph API", "OAuth 2.0", "JSON Web Tokens (JWT)", "OpenID Connect", "Amazon Web Services (AWS)",
                 "Microsoft Azure", "Google Cloud Platform", "Salesforce API", "Twilio API", "Slack API", "Shopify API", "LinkedIn API",
                                                             "Mailchimp API", "Twitch API", "GitHub API", "other"]
 
-
 def app():
+     # Clearing the spinner session state if it was set on a previous page
+    if 'validating' in st.session_state:
+        del st.session_state['validating']
     st.subheader("Choose Tech Stack")
     ui_block, uml_block = st.columns([0.8, 0.2])
 
@@ -45,10 +47,10 @@ def app():
         st.session_state['recommended_language'] = None
     if 'recommended_framework' not in st.session_state:
         st.session_state['recommended_framework'] = None
-    if 'recommended_database' not in st.session_state:
-        st.session_state['recommended_database'] = None
+    if 'recommended_databases' not in st.session_state:
+        st.session_state['recommended_databases'] = []
     if 'recommended_integrations' not in st.session_state:
-        st.session_state['recommended_integrations'] = None
+        st.session_state['recommended_integrations'] = []
 
     with ui_block:
         # Programming language selection
@@ -83,36 +85,72 @@ def app():
         # Database selection
         col1_db, col2_db = st.columns([3, 5])
         with col1_db:
-            st.write("Selected database:")
+            st.write("Selected database(s):")
+        # For the database selection with dynamic addition based on GPT recommendations
         with col2_db:
-            if st.session_state['recommended_database'] is None:
-                with st.spinner('Generating recommended database...'):
-                    recommended_db = gpt_instance(input=f'Given these requirements:\n{text}\n Given also that we are using this language {recommended_language} with this API framework {recommended_framework}, recommend a database to use based on simplicity of use, compatibility with requirements, language, and API framework, ease of use, popularity in developer community, efficiency, and scalability out of the following databases: [{"".join(DATABASES)}]? If the requirements do not require a database, choose the "None needed" option. Respond ONLY with ONE option and nothing else.', max_tokens=10).content
-                    st.session_state['recommended_database'] = recommended_db
-            options_db = list(set(DATABASES + [st.session_state['recommended_database']]))
-            st.session_state['recommended_database'] = st.selectbox('', options_db, index=options_db.index(st.session_state['recommended_database']))
+            max_db_recommendations = 3  # Set the maximum number of database recommendations
+            # Loop for multiple database recommendations
+            for i in range(max_db_recommendations):
+                # Check if we need to generate a new recommendation
+                if i >= len(st.session_state['recommended_databases']):
+                    with st.spinner(f'Generating recommendation for database #{i+1}...'):
+                        # Construct the prompt with previously selected databases
+                        previous_dbs = ', '.join(st.session_state['recommended_databases'])
+                        recommended_db = gpt_instance(input=f'Given these requirements:\n{text}\n Given also that we are using this language {recommended_language} with this API framework {recommended_framework} and given that we are already using these databases [{previous_dbs}], recommend a database to use based on simplicity of use, compatibility with requirements, language, and API framework, ease of use, popularity in developer community, efficiency, and scalability out of the following databases: [{"".join(DATABASES)}]? If the requirements do not require a database or we are already using sufficiently many databases, choose the "None needed" option. Respond ONLY with ONE option and NOTHING else.', max_tokens=10).content.strip()
+                        # Update the session state only if recommended database is not 'None needed'
+                        if "none needed" in recommended_db.lower():
+                            break
+                        else:
+                            st.session_state['recommended_databases'].append(recommended_db)
+
+                # Always show the dropdown to allow user selection or change; ensure the dropdown appears even if recommendation is 'None needed'
+                current_option = st.session_state['recommended_databases'][i] if i < len(st.session_state['recommended_databases']) else "None needed"
+                selected_db = st.selectbox(f'Selected database #{i+1}:', DATABASES + [current_option], index=(DATABASES + [current_option]).index(current_option) if current_option in DATABASES else len(DATABASES))
+                # Update the session state based on user selection
+                if i < len(st.session_state['recommended_databases']):
+                    st.session_state['recommended_databases'][i] = selected_db
+                elif selected_db != "None needed":
+                    st.session_state['recommended_databases'].append(selected_db)
 
         # Integration selection
         col1_integration, col2_integration = st.columns([3, 5])
         with col1_integration:
-            st.write("Selected additional integrations:")
+            st.write("Selected additional integration(s):")
         with col2_integration:
-            if st.session_state['recommended_integrations'] is None:
-                with st.spinner('Generating recommended integrations...'):
-                    recommended_integrations = gpt_instance(input=f'Given these requirements:\n{text}\n Given also that we are using this language {recommended_language} with this API framework {recommended_framework} and this database {recommended_db}, recommend the MOST IMPORTANT integration to use that is necessary for building an application fullfilling the requirements out of these additional integrations: [{"".join(INTEGRATIONS)}]? If the requirements do not require an integration, choose the "None needed" option. Respond ONLY with ONE option and nothing else.', max_tokens=10).content
-                    st.session_state['recommended_integrations'] = recommended_integrations
-            options_integration = list(set(INTEGRATIONS + [st.session_state['recommended_integrations']]))
-            st.session_state['recommended_integrations'] = st.selectbox('', options_integration, index=options_integration.index(st.session_state['recommended_integrations']))
+            max_integ_recommendations = 3  # Set the maximum number of database recommendations
+            # Loop for multiple database recommendations
+            for i in range(max_integ_recommendations):
+                # Check if we need to generate a new recommendation
+                if i >= len(st.session_state['recommended_integrations']):
+                    with st.spinner(f'Generating recommendation for integration #{i+1}...'):
+                        # Construct the prompt with previously selected databases
+                        previous_integs = ', '.join(st.session_state['recommended_integrations'])
+                        recommended_integ = gpt_instance(input=f'Given these requirements:\n{text}\n Given also that we are using this language {recommended_language} with this API framework {recommended_framework} and given that we are already using these integrations [{previous_integs}], recommend an integration that is necessary for satisfying the requirements of the app we are building fro the following integratiions: [{"".join(INTEGRATIONS)}]? If the requirements do not require an integration or we are already using sufficiently many integrations, choose the "None needed" option. Respond ONLY with ONE option and NOTHING else.', max_tokens=10).content.strip()
+                        # Update the session state only if recommended database is not 'None needed'
+                        if "none needed" in recommended_integ.lower():
+                            break
+                        else:
+                            st.session_state['recommended_integrations'].append(recommended_integ)
+
+                # Always show the dropdown to allow user selection or change; ensure the dropdown appears even if recommendation is 'None needed'
+                current_option = st.session_state['recommended_integrations'][i] if i < len(st.session_state['recommended_integrations']) else "None needed"
+                selected_integ = st.selectbox(f'Selected database #{i+1}:', INTEGRATIONS + [current_option], index=( INTEGRATIONS + [current_option]).index(current_option) if current_option in INTEGRATIONS else len(INTEGRATIONS))
+                # Update the session state based on user selection
+                if i < len(st.session_state['recommended_integrations']):
+                    st.session_state['recommended_integrations'][i] = selected_integ
+                elif selected_db != "None recommended_integrations":
+                    st.session_state['recommended_integrations'].append(selected_integ)
         
         # Button to proceed to the next step, should be enabled only after all selections are made
         all_selections_made = all([
             st.session_state['recommended_language'] is not None,
             st.session_state['recommended_framework'] is not None,
-            st.session_state['recommended_database'] is not None,
+            st.session_state['recommended_databases'] is not None,
             st.session_state['recommended_integrations'] is not None
         ])
         if all_selections_made:
             submit_button = st.button("Step 3: Generate UML")
             if submit_button:
-                # Perform next actions here such as generating UML and navigating to the next page
-                pass
+                st.session_state['current_page'] = 'Choose Tech Stack Page'
+                st.session_state['requirements_text'] = text
+                st.experimental_rerun()

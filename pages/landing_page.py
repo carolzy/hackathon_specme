@@ -19,6 +19,7 @@ def read_docx(file):
     return " ".join(paragraph.text for paragraph in doc.paragraphs)
 
 def app():
+
     st.subheader('Go from requirements document to functioning endpoint instantly!')
 
     uploaded_file = st.file_uploader("Choose a file", type=['pdf', 'docx', 'txt'], key="file_uploader")
