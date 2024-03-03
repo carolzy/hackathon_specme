@@ -7,6 +7,8 @@ from function.gpt4_examples import endpoint_examples
 def endpoint_generation(
     problem_description: str,
     uml_code: str,
+    class_code: str,
+    language: str,
     folder_structure: dict,
     max_retries: int = 3,
 ):
@@ -43,7 +45,9 @@ def endpoint_generation(
             output = endpoint_agent(
                 "With the following information, tell me which endpoints should be implemented in each file (be specific and use type hints), and explain the relationships between them."
                 f"The problem is {problem_description}.\n"
-                f"The architecture diagram is as follows: {uml_code}\n"
+                f"The UML diagram is as follows: {uml_code}\n"
+                f"The class diagram is as follows: {class_code}\n"
+                f"The backend programming language is as follows: {language}\n"
                 f"And this is the file structure:\n{folder_structure}"
             )
 

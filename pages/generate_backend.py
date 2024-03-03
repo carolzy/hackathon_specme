@@ -4,15 +4,19 @@ from templates import display_folder_structure
 from function import folder_structure_gen
 from function import endpoint_gen
 
+import time
 import json
 
 def app():
 
-    # st.set_page_config(page_title="Generate Backend Code")
-
-    st.subheader('Folder Structure')
+    st.subheader('Backend Code and Folder Structure')
 
     uml_dict_session_state = st.session_state.get('uml_dir_json', None)
+    dev_project_req = st.session_state.get('requirements_text', None)
+    uml_dict = st.session_state.get('uml_dict', None)
+    class_diagram_dict = st.session_state.get('class_diagram_dict', None)
+    language = st.session_state.get('recommended_language', None)
+
     if uml_dict_session_state is not None:
         uml_dict_session_state = st.session_state.get('uml_dir_json', None)
         display_folder_structure.display_tree(uml_dict_session_state, ["root"])
@@ -22,7 +26,7 @@ def app():
         if gen_pseudo_buttom:
             with st.spinner("Generating pseudo code in repo ..."):
                 pseudo_code_json = endpoint_gen.endpoint_generation(
-                    dev_project_req, uml_dict['uml_code'], uml_dict_session_state)
+                    dev_project_req, uml_dict['uml_code'], class_diagram_dict['uml_code'], language, uml_dict_session_state)
                 st.session_state['pseudo_code_json'] = pseudo_code_json
                 msg_pseu_code = st.success(
                     "pseudo code successfully generated and imported ... ")
@@ -42,17 +46,25 @@ def app():
                     '/')[1]
                 code = pseudo_code_json["endpoints"][i]['contents']
                 uml_dict_session_state['root'][main_folder][file_name] = code
+            
+            col1, col2, col3, col4 = st.columns(4)
 
-            st.download_button(
-                data=folder_structure_gen.download_repo(
-                    pseudo_code_json['endpoints']),
-                label="Download Repository",
-                file_name="generated_repo.zip",
-                mime="application/zip",
-                on_click=folder_structure_gen.download_repo,
-                args=(pseudo_code_json['endpoints'],)
-            )
-
+            with col1:
+                st.download_button(
+                    data=folder_structure_gen.download_repo(
+                        pseudo_code_json['endpoints']),
+                    label="Download Repository",
+                    file_name="generated_repo.zip",
+                    mime="application/zip",
+                    on_click=folder_structure_gen.download_repo,
+                    args=(pseudo_code_json['endpoints'],)
+                )
+            with col2:
+                st.button("Deploy Backend Code")
+            with col3:
+                st.button("Generate Postman Collection")
+            with col4:
+                st.button("Generate API Docs")
         else:
             st.write("... start pseudo code generation ...")
 
@@ -65,20 +77,11 @@ def app():
         display_folder_structure.display_tree(data, ["root"])
 
 
-    col1, col2, col3, col4 = st.columns(4)
 
-    with col1:
-        submit_button = st.button("Download Backend Code")
-    with col2:
-        submit_button_2 = st.button("Deploy Backend Code")
-    with col3:
-        submit_button_3 = st.button("Generate Postman Collection")
-    with col4:
-        submit_button_4 = st.button("Generate API Docs")
 
-    if submit_button:
-        with st.spinner(" (4/4) generating Repo structure ..."):
-            # TODO: pass the uml design, project requirements 
-            # uml_dir_json = folder_structure_gen.folder_structure_gen(None, uml_dict["uml_code"])
-            # st.session_state['uml_dir_json'] = uml_dir_json
-            pass
+    # if submit_button:
+    #     with st.spinner(" (4/4) generating Repo structure ..."):
+    #         # TODO: pass the uml design, project requirements 
+    #         # uml_dir_json = folder_structure_gen.folder_structure_gen(None, uml_dict["uml_code"])
+    #         # st.session_state['uml_dir_json'] = uml_dir_json
+    #         pass
