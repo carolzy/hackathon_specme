@@ -115,4 +115,4 @@ def app():
             submit_button = st.button("Step 3: Generate UML")
             if submit_button:
                st.session_state['current_page'] = 'Generate Design'
-               st.rerun()
+               st.experimental_rerun()
