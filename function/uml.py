@@ -55,11 +55,11 @@ def generate_uml_code(
         try:
             output = uml_agent(
                 f"""I want to brainstorm for a new project, the idea is:\n{project_requirements}.
-                These are some developer's technology preference to include, but keep in mind this is only a preference, do not include it or use it if it doesn't make sense:\n
-                    1. preferred programming language = {framework_lang} \n
-                    2. preferred tech stack = {framework_ts} \n
-                    3. preferred database (if any) = {framework_db} \n
-                    4. preferred integration (if any) = {framework_int} \n
+                These are some developer's technology preference to include, but keep in mind this is only a preference, do not include it or use it if it doesn't make sense. Do not include anything related to the front-end, authentication, or mobile. This design should be focused on the backend parts of the system. Also keep it as simple as possible. Here are the preferences:\n
+                    1. selected programming language = {framework_lang} \n
+                    2. selected API framework = {framework_ts} \n
+                    3. selected database = {framework_db} \n
+                    4. selected integration = {framework_int} \n
 
                 Can you create an initial diagram (using plantUML) of how I can build it? You MUST respond with the UML diagram and nothing else. 
                 """
