@@ -53,6 +53,7 @@ def app():
                 print(gpt_response.content)
                 if "YES" in gpt_response.content.upper():
                     validated = True
+                    st.session_state['project_req'] = text
                 else:
                     validated = False
                     st.error("The uploaded document does not seem to be a valid requirements document. Please upload a document listing the product requirements.")

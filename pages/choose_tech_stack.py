@@ -151,6 +151,6 @@ def app():
         if all_selections_made:
             submit_button = st.button("Step 3: Generate UML")
             if submit_button:
-                st.session_state['current_page'] = 'Choose Tech Stack Page'
-                st.session_state['requirements_text'] = text
-                st.experimental_rerun()
+
+               st.session_state['current_page'] = 'Generate Design'
+               st.experimental_rerun()
