@@ -28,7 +28,7 @@ def render_page(page):
 
 # Initialize the session state for the current page if it's not already set
 if 'current_page' not in st.session_state:
-    st.session_state['current_page'] = "Generate Design"
+    st.session_state['current_page'] = "Landing Page"
 
 # Render the current page based on the session state
 render_page(st.session_state['current_page'])
