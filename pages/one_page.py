@@ -1,5 +1,5 @@
 import streamlit as st
-
+import traceback
 from templates import display_folder_structure
 
 from function import uml
@@ -306,8 +306,8 @@ def app():
                 pseudo_code_json = st.session_state.get('pseudo_code_json', None)
                 print(pseudo_code_json)
                 if pseudo_code_json is not None:
-                    print('psuedo code not none')
-                    for i in range(len(pseudo_code_json["endpoints"])):
+                    print('psuedo code not none', pseudo_code_json)
+                    for i in range(len(json.loads(pseudo_code_json["endpoints"]))):
                         # Only necessary for displaying directory.
                         main_folder = pseudo_code_json["endpoints"][i]['file_path'].split('/')[0]
                         if not uml_dict_session_state['root'].get(main_folder):
@@ -349,6 +349,8 @@ def app():
                 #display_folder_structure.display_tree(data, ["root"])
         
         except Exception as e:
+                print(e)
+                print(traceback.format_exc())
                 example_uml = """ 
                     {"root": {"transcript_dataset": {"init.py": {}, "data_processing.py": {}, "tests": {"init.py": {}, "test_data_processing.py": {}}}, "language_model": {"init.py": {}, "model.py": {}, "preprocessing.py": {}, "tests": {"init.py": {}, "test_model.py": {}}}, "summarization_module": {"init.py": {}, "summarizer.py": {}, "tests": {"init.py": {}, "test_summarizer.py": {}}}, "key_point_extraction_module": {"init.py": {}, "extractor.py": {}, "tests": {"init.py": {}, "test_extractor.py": {}}}, "config": {"settings.py": {}}, "README.md": {}}}
                             """
